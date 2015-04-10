@@ -49,6 +49,25 @@ Debian/Ubuntu: ``sudo apt-get install libtre5 libtre-dev``
 
 OS X: ``brew install tre``
 
+Tests
+=====
+
+Dependencies
+------------
+
+.. code-block:: bash 
+
+  pip install tox nose
+
+To test against different python versions use tox::
+  
+  tox 
+
+To run the tests with the active python::
+
+  python setup.py build && nosetests tests 
+
+
 Building
 ========
 

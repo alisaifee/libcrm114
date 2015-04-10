@@ -283,6 +283,8 @@ typedef struct
 //  hash function for variable tables
 unsigned int crm114_strnhash (const char *str, long len);
 
+//  error string for error codes
+const char *crm114_strerror(CRM114_ERR err);
 
 //    Stuff for the vector tokenizer - used to turn text into hash vectors.
 //
@@ -426,10 +428,10 @@ void crm114_show_result(const char name[], const CRM114_MATCHRESULT *r);
 
 void crm114_free(void *p);
 
-int crm114_cb_write_text_fp(const CRM114_CONTROLBLOCK *cb, FILE *fp);
-int crm114_cb_write_text(const CRM114_CONTROLBLOCK *cb, const char filename[]);
-int crm114_db_write_text_fp(const CRM114_DATABLOCK *db, FILE *fp);
-int crm114_db_write_text(const CRM114_DATABLOCK *db, const char filename[]);
+CRM114_ERR crm114_cb_write_text_fp(const CRM114_CONTROLBLOCK *cb, FILE *fp);
+CRM114_ERR crm114_cb_write_text(const CRM114_CONTROLBLOCK *cb, const char filename[]);
+CRM114_ERR crm114_db_write_text_fp(const CRM114_DATABLOCK *db, FILE *fp);
+CRM114_ERR crm114_db_write_text(const CRM114_DATABLOCK *db, const char filename[]);
 CRM114_CONTROLBLOCK *crm114_cb_read_text_fp(FILE *fp);
 CRM114_CONTROLBLOCK *crm114_cb_read_text(const char filename[]);
 CRM114_DATABLOCK *crm114_db_read_text_fp(FILE *fp);

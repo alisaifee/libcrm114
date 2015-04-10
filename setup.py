@@ -3,8 +3,7 @@ import os
 from setuptools import setup, Extension
 
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-top_dir = os.path.dirname(script_dir)
+top_dir = os.path.dirname(os.path.realpath(__file__))
 inc_dir = os.path.join(top_dir, "include")
 lib_dir = os.path.join(top_dir, "lib")
 libcrm114_obj = [
@@ -30,7 +29,7 @@ libcrm114_obj = [
     )
 ]
 pycrm114_module = Extension('pycrm114',
-                            sources=libcrm114_obj + ['pycrm114_module.c'],
+                            sources=libcrm114_obj + ['src/pycrm114_module.c'],
                             include_dirs=[inc_dir],
                             library_dirs=[lib_dir],
                             runtime_library_dirs=[lib_dir],

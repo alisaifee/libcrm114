@@ -31,13 +31,13 @@
 /* TODO: cleanup this stupidity */
 
 #if PY_MAJOR_VERSION >= 3
-    #define LONGTOPY PyLong_FromLong
-    #define STRINGTOPY PyUnicode_FromString
-    #define PYMODRETURN return NULL
+#define LONGTOPY PyLong_FromLong
+#define STRINGTOPY PyUnicode_FromString
+#define PYMODRETURN return NULL
 #else
-    #define LONGTOPY PyInt_FromLong
-    #define STRINGTOPY PyString_FromString
-    #define PYMODRETURN return
+#define LONGTOPY PyInt_FromLong
+#define STRINGTOPY PyString_FromString
+#define PYMODRETURN return
 #endif
 
 /* Objects and Types */
@@ -47,19 +47,19 @@ static PyObject *ErrorObject = NULL;
 static PyTypeObject CB_Type;
 typedef struct {
   PyObject_HEAD
-  CRM114_CONTROLBLOCK *p_cb;
+    CRM114_CONTROLBLOCK *p_cb;
 } CB_Object;
 
 static PyTypeObject DB_Type;
 typedef struct {
   PyObject_HEAD
-  CRM114_DATABLOCK *p_db;
+    CRM114_DATABLOCK *p_db;
 } DB_Object;
 
 static PyTypeObject Result_Type;
 typedef struct {
   PyObject_HEAD
-  CRM114_MATCHRESULT mr;
+    CRM114_MATCHRESULT mr;
 } Result_Object;
 
 /* Control block */
@@ -84,8 +84,8 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
   PyObject *classes = NULL, *class_iter = NULL, *class = NULL; int nclass = 0;
   static char *kwlist[] = {"flags", "classes", "regex", "start_mem", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "KO!|s#n:ControlBlock_new",
-                                   kwlist, &flags, &PyList_Type, &classes,
-                                   &regex, &regex_len, &start_mem)) {
+        kwlist, &flags, &PyList_Type, &classes,
+        &regex, &regex_len, &start_mem)) {
     Py_CLEAR(self);
     return NULL;
   }
@@ -93,7 +93,7 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
   // Set the classifier.
   if ((cerr = crm114_cb_setflags(self->p_cb, flags)) != CRM114_OK) {
     (void)PyErr_Format(ErrorObject, "error setting control block flags: %s",
-                       crm114_strerror(cerr));
+        crm114_strerror(cerr));
     goto error;
   }
 
@@ -104,7 +104,7 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
   if ((regex_len > 0) &&
       (cerr = crm114_cb_setregex(self->p_cb, regex, regex_len)) != CRM114_OK) {
     PyErr_Format(ErrorObject, "error setting control block regex: %s",
-                 crm114_strerror(cerr));
+        crm114_strerror(cerr));
     goto error;
   }
 
@@ -117,8 +117,8 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
   }
 
   for (nclass = 0;
-       (class = PyIter_Next(class_iter)) && nclass < CRM114_MAX_CLASSES;
-       nclass++) {
+      (class = PyIter_Next(class_iter)) && nclass < CRM114_MAX_CLASSES;
+      nclass++) {
 
     const char *nm = NULL; int nm_len = 0;
     PyObject *bool = NULL;
@@ -143,7 +143,7 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
     Py_CLEAR(class);
     continue;
 
-  loop_error:
+loop_error:
     Py_CLEAR(class);
     Py_CLEAR(class_iter);
     Py_CLEAR(classes);
@@ -173,7 +173,7 @@ CB_new(PyTypeObject *dummy, PyObject *args, PyObject *kwargs) {
 
   return (PyObject *)self;
 
- error:
+error:
   Py_CLEAR(self);
   return NULL;
 }
@@ -230,15 +230,15 @@ CB_load(PyObject *type, PyObject *args) {
 
 static PyMethodDef CB_methods[] = {
   {"dump", (PyCFunction)CB_dump, METH_VARARGS,
-   "store data block into a file"},
+    "store data block into a file"},
   {"load", (PyCFunction)CB_load, METH_CLASS | METH_VARARGS,
-   "load data block from a file"},
+    "load data block from a file"},
   {NULL}                        /* sentinel          */
 };
 
 static PyTypeObject CB_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-  "pycrm114.ControlBlock",      /* tp_name           */
+    "pycrm114.ControlBlock",      /* tp_name           */
   sizeof(CB_Object),            /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -396,19 +396,19 @@ DB_load(PyObject *type, PyObject *args) {
 
 static PyMethodDef DB_methods[] = {
   {"learn_text", (PyCFunction)DB_learn_text, METH_VARARGS,
-   "learn some example text into the specified class"},
+    "learn some example text into the specified class"},
   {"classify_text", (PyCFunction)DB_classify_text, METH_VARARGS,
-   "classify text into one of the learned classes"},
+    "classify text into one of the learned classes"},
   {"dump", (PyCFunction)DB_dump, METH_VARARGS,
-   "store data block into a file"},
+    "store data block into a file"},
   {"load", (PyCFunction)DB_load, METH_CLASS | METH_VARARGS,
-   "load data block from a file"},
+    "load data block from a file"},
   {NULL}                        /* sentinel          */
 };
 
 static PyTypeObject DB_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-  "pycrm114.DataBlock",         /* tp_name           */
+    "pycrm114.DataBlock",         /* tp_name           */
   sizeof(DB_Object),            /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -544,7 +544,7 @@ Result_scores(Result_Object *self) {
     PyList_SET_ITEM(list, i, d);
     continue;
 
-  loop_error:
+loop_error:
     Py_CLEAR(succ);
     Py_CLEAR(hits);
     Py_CLEAR(feats);
@@ -558,28 +558,28 @@ Result_scores(Result_Object *self) {
 
   return list;
 
- error:
+error:
   Py_CLEAR(list);
   return NULL;
 }
 
 static PyMethodDef Result_methods[] = {
   {"best_match", (PyCFunction)Result_best_match, METH_NOARGS,
-   "name of best matching class"},
+    "name of best matching class"},
   {"tsprob", (PyCFunction)Result_tsprob, METH_NOARGS,
-   "total success probability"},
+    "total success probability"},
   {"overall_pR", (PyCFunction)Result_overall_pR, METH_NOARGS,
-   "overall_pR"},
+    "overall_pR"},
   {"unk_features", (PyCFunction)Result_unk_features, METH_NOARGS,
-   "unknown features"},
+    "unknown features"},
   {"scores", (PyCFunction)Result_scores, METH_NOARGS,
-   "match scores for each class"},
+    "match scores for each class"},
   {NULL}                        /* sentinel          */
 };
 
 static PyTypeObject Result_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-  "pycrm114.MatchResult",       /* tp_name           */
+    "pycrm114.MatchResult",       /* tp_name           */
   sizeof(Result_Object),        /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -628,7 +628,7 @@ static PyTypeObject Result_Type = {
 /* Module initialization */
 
 static char module_doc [] =
-  "This module implements an interface to the libcrm114 library.\n";
+"This module implements an interface to the libcrm114 library.\n";
 
 static PyMethodDef crm114_methods[] = {
   {NULL, NULL, 0, NULL}
@@ -650,7 +650,7 @@ insobj(PyObject *d, char *name, PyObject *value) {
   Py_CLEAR(value);
   return;
 
- error:
+error:
   Py_FatalError("pycrm114: insobj() failed");
   assert(0);
 }
@@ -671,25 +671,25 @@ initpycrm114(void)
 {
   PyObject *m, *d;
 #if PY_MAJOR_VERSION >= 3
-    static struct PyModuleDef moduledef = {
-        PyModuleDef_HEAD_INIT,
-        "pycrm114",          /* m_name */
-        module_doc,          /* m_doc */
-        -1,                  /* m_size */
-        crm114_methods,      /* m_methods */
-        NULL,                /* m_reload */
-        NULL,                /* m_traverse */
-        NULL,                /* m_clear */
-        NULL,                /* m_free */
-    };
+  static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "pycrm114",          /* m_name */
+    module_doc,          /* m_doc */
+    -1,                  /* m_size */
+    crm114_methods,      /* m_methods */
+    NULL,                /* m_reload */
+    NULL,                /* m_traverse */
+    NULL,                /* m_clear */
+    NULL,                /* m_free */
+  };
 #endif
   /* Create the module. */
 #if PY_MAJOR_VERSION >= 3
-    m = PyModule_Create(&moduledef);
+  m = PyModule_Create(&moduledef);
 #else
-    m = Py_InitModule3("pycrm114", crm114_methods, module_doc);
+  m = Py_InitModule3("pycrm114", crm114_methods, module_doc);
 #endif
-    assert(m != NULL && PyModule_Check(m));
+  assert(m != NULL && PyModule_Check(m));
 
   /* Add module objects. */
   if (PyType_Ready(&CB_Type) < 0)

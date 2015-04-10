@@ -28,6 +28,18 @@
 #undef UNUSED
 #define UNUSED(var)     ((void)&var)
 
+/* TODO: cleanup this stupidity */
+
+#if PY_MAJOR_VERSION >= 3
+    #define LONGTOPY PyLong_FromLong
+    #define STRINGTOPY PyUnicode_FromString
+    #define PYMODRETURN return NULL
+#else
+    #define LONGTOPY PyInt_FromLong
+    #define STRINGTOPY PyString_FromString
+    #define PYMODRETURN return
+#endif
+
 /* Objects and Types */
 
 static PyObject *ErrorObject = NULL;
@@ -177,15 +189,17 @@ CB_dump(CB_Object *self, PyObject *args) {
   PyObject *fpo;
   FILE *fp;
   CRM114_ERR cerr;
-
-  if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &fpo))
+  char * fn;
+  if (!PyArg_ParseTuple(args, "s", &fn))
     return NULL;
-  fp = PyFile_AsFile(fpo);
+  fp = fopen(fn, "w");
   if ((cerr = crm114_cb_write_text_fp(self->p_cb, fp)) != CRM114_OK) {
     PyErr_Format(ErrorObject, "error storing control block: %s", crm114_strerror(cerr));
+    fclose(fp);
     return NULL;
   }
-  Py_RETURN_NONE;
+  fclose(fp);
+  return Py_BuildValue("");
 }
 
 static PyObject *
@@ -193,18 +207,24 @@ CB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;
   CB_Object *self;
   FILE *fp;
+  char * fn;
   CRM114_CONTROLBLOCK *p_cb;
 
-  if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &fpo))
+  if (!PyArg_ParseTuple(args, "s", &fn))
     return NULL;
-  fp = PyFile_AsFile(fpo);
+  fp = fopen(fn, "r");
   if ((p_cb = crm114_cb_read_text_fp(fp)) == NULL) {
     PyErr_Format(ErrorObject, "error reading control block");
+    fclose(fp);
     return NULL;
   }
-  if ((self = (CB_Object *)PyObject_New(CB_Object, &CB_Type)) == NULL)
+  if ((self = (CB_Object *)PyObject_New(CB_Object, &CB_Type)) == NULL){
+    fclose(fp);
+    PyErr_Format(ErrorObject, "some shit happened");
     return NULL;
+  }
   self->p_cb = p_cb;
+  fclose(fp);
   return (PyObject *)self;
 }
 
@@ -334,15 +354,18 @@ static PyObject *
 DB_dump(DB_Object *self, PyObject *args) {
   PyObject *fpo;
   FILE *fp;
+  char *fn;
   CRM114_ERR cerr;
 
-  if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &fpo))
+  if (!PyArg_ParseTuple(args, "s", &fn))
     return NULL;
-  fp = PyFile_AsFile(fpo);
+  fp = fopen(fn, "wb");
   if ((cerr = crm114_db_write_text_fp(self->p_db, fp)) != CRM114_OK) {
     PyErr_Format(ErrorObject, "error storing data block: %s", crm114_strerror(cerr));
+    fclose(fp);
     return NULL;
   }
+  fclose(fp);
   Py_RETURN_NONE;
 }
 
@@ -351,18 +374,23 @@ DB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;
   DB_Object *self;
   FILE *fp;
+  char * fn;
   CRM114_DATABLOCK *p_db;
 
-  if (!PyArg_ParseTuple(args, "O!", &PyFile_Type, &fpo))
+  if (!PyArg_ParseTuple(args, "s", &fn))
     return NULL;
-  fp = PyFile_AsFile(fpo);
+  fp = fopen(fn, "rb");
   if ((p_db = crm114_db_read_text_fp(fp)) == NULL) {
     PyErr_Format(ErrorObject, "error reading data block");
+    fclose(fp);
     return NULL;
   }
-  if ((self = (DB_Object *)PyObject_New(DB_Object, &DB_Type)) == NULL)
+  if ((self = (DB_Object *)PyObject_New(DB_Object, &DB_Type)) == NULL){
+    fclose(fp);
     return NULL;
+  }
   self->p_db = p_db;
+  fclose(fp);
   return (PyObject *)self;
 }
 
@@ -444,7 +472,7 @@ Result_dealloc(Result_Object *self) {
 static PyObject *
 Result_best_match(Result_Object *self) {
   int idx = self->mr.bestmatch_index;
-  return PyString_FromString(self->mr.class[idx].name);
+  return STRINGTOPY(self->mr.class[idx].name);
 }
 
 static PyObject *
@@ -459,7 +487,7 @@ Result_overall_pR(Result_Object *self) {
 
 static PyObject *
 Result_unk_features(Result_Object *self) {
-  return PyInt_FromLong(self->mr.unk_features);
+  return LONGTOPY(self->mr.unk_features);
 }
 
 static PyObject *
@@ -478,7 +506,7 @@ Result_scores(Result_Object *self) {
     if ((d = PyDict_New()) == NULL)
       goto error;
 
-    if ((name = PyString_FromString(self->mr.class[i].name)) == NULL)
+    if ((name = STRINGTOPY(self->mr.class[i].name)) == NULL)
       goto loop_error;
     if (PyDict_SetItemString(d, "name", name) < 0)
       goto loop_error;
@@ -493,22 +521,22 @@ Result_scores(Result_Object *self) {
     if (PyDict_SetItemString(d, "prob", prob) < 0)
       goto loop_error;
 
-    if ((docs = PyInt_FromLong(self->mr.class[i].documents)) == NULL)
+    if ((docs = LONGTOPY(self->mr.class[i].documents)) == NULL)
       goto loop_error;
     if (PyDict_SetItemString(d, "documents", docs) < 0)
       goto loop_error;
 
-    if ((feats = PyInt_FromLong(self->mr.class[i].features)) == NULL)
+    if ((feats = LONGTOPY(self->mr.class[i].features)) == NULL)
       goto loop_error;
     if (PyDict_SetItemString(d, "features", feats) < 0)
       goto loop_error;
 
-    if ((hits = PyInt_FromLong(self->mr.class[i].hits)) == NULL)
+    if ((hits = LONGTOPY(self->mr.class[i].hits)) == NULL)
       goto loop_error;
     if (PyDict_SetItemString(d, "hits", hits) < 0)
       goto loop_error;
 
-    if ((succ = PyInt_FromLong(self->mr.class[i].success)) == NULL)
+    if ((succ = LONGTOPY(self->mr.class[i].success)) == NULL)
       goto loop_error;
     if (PyDict_SetItemString(d, "success", succ) < 0)
       goto loop_error;
@@ -611,7 +639,7 @@ insobj(PyObject *d, char *name, PyObject *value) {
   PyObject *key = NULL;
   if (d == NULL || value == NULL)
     goto error;
-  key = PyString_FromString(name);
+  key = STRINGTOPY(name);
   if (key == NULL)
     goto error;
 
@@ -629,30 +657,52 @@ insobj(PyObject *d, char *name, PyObject *value) {
 
 static void
 inslong(PyObject *d, char *name, unsigned long long value) {
-  PyObject *v = PyInt_FromLong(value);
+  PyObject *v = LONGTOPY(value);
   insobj(d, name, v);
 }
 
 PyMODINIT_FUNC
-initpycrm114(void) {
-  PyObject *m, *d;
+#if PY_MAJOR_VERSION >= 3
+PyInit_pycrm114(void)
+#else
+initpycrm114(void)
+#endif
 
+{
+  PyObject *m, *d;
+#if PY_MAJOR_VERSION >= 3
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "pycrm114",          /* m_name */
+        module_doc,          /* m_doc */
+        -1,                  /* m_size */
+        crm114_methods,      /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+#endif
   /* Create the module. */
-  m = Py_InitModule3("pycrm114", crm114_methods, module_doc);
-  assert(m != NULL && PyModule_Check(m));
+#if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&moduledef);
+#else
+    m = Py_InitModule3("pycrm114", crm114_methods, module_doc);
+#endif
+    assert(m != NULL && PyModule_Check(m));
 
   /* Add module objects. */
   if (PyType_Ready(&CB_Type) < 0)
-    return;
+    PYMODRETURN;
   Py_INCREF(&CB_Type);
   PyModule_AddObject(m, "ControlBlock", (PyObject *)&CB_Type);
   if (PyType_Ready(&DB_Type) < 0)
-    return;
+    PYMODRETURN;
   Py_INCREF(&DB_Type);
   PyModule_AddObject(m, "DataBlock", (PyObject *)&DB_Type);
 
   if (PyType_Ready(&Result_Type) < 0)
-    return;
+    PYMODRETURN;
   Py_INCREF(&Result_Type);
   PyModule_AddObject(m, "MatchResult", (PyObject *)&Result_Type);
 
@@ -695,5 +745,9 @@ initpycrm114(void) {
   inslong(d, "CRM114_ERASE", CRM114_ERASE);
   inslong(d, "CRM114_PCA", CRM114_PCA);
   inslong(d, "CRM114_BOOST", CRM114_BOOST);
+
+#if PY_MAJOR_VERSION >= 3
+  return m;
+#endif
 
 }

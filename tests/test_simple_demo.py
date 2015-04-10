@@ -2,8 +2,8 @@ import os
 import pycrm114
 import unittest
 import tempfile
+from . import texts
 
-import texts
 Alice_frag = \
     "So she was considering in her own mind (as well as she could, for the\n" \
     "hot day made her feel very sleepy and stupid), whether the pleasure\n" \
@@ -42,7 +42,7 @@ class SimpleDemoTests(unittest.TestCase):
                             classes=[("Alice", True), ("Macbeth", False)],
                             start_mem = 8000000)
         output = tempfile.mktemp()
-        cb.dump(file(output, 'w'))
+        cb.dump(output)
 
         self.assertTrue(os.path.isfile(output))
         self.assertTrue(os.stat(output).st_size > 0)
@@ -50,11 +50,11 @@ class SimpleDemoTests(unittest.TestCase):
         cb = pycrm114.ControlBlock(flags=(pycrm114.CRM114_SVM | pycrm114.CRM114_STRING),
                                    classes=[("Alice", True), ("Macbeth", False)],
                                    start_mem = 8000000)
-        cb.load(open(output))
-        pycrm114.ControlBlock.load(file("tests/fixtures/test_cb_dump.txt", 'r'))
+        cb.load(output)
+        pycrm114.ControlBlock.load("tests/fixtures/test_cb_dump.txt")
 
     def test_classification(self):
-        cb = pycrm114.ControlBlock.load(file("tests/fixtures/test_cb_dump.txt", 'r'))
+        cb = pycrm114.ControlBlock.load("tests/fixtures/test_cb_dump.txt")
         db = pycrm114.DataBlock(cb)
 
         db.learn_text(0, texts.Alice)
@@ -63,10 +63,10 @@ class SimpleDemoTests(unittest.TestCase):
         db.learn_text(1, texts.Macbeth)
 
         # Writing our datablock as 'simple_demo_datablock.txt'.
-        db.dump(file("simple_demo_datablock.txt", 'w'))
+        db.dump("simple_demo_datablock.txt")
 
         # Reading text form back in."
-        db = pycrm114.DataBlock.load(file("simple_demo_datablock.txt", 'r'))
+        db = pycrm114.DataBlock.load("simple_demo_datablock.txt")
 
         #  Classifying the 'Alice' text.
         s = db.classify_text(Alice_frag)
@@ -79,7 +79,7 @@ class SimpleDemoTests(unittest.TestCase):
             print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
                    (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
 
-        print " Classifying the 'Macbeth' text."
+        print(" Classifying the 'Macbeth' text.")
         s = db.classify_text(Macbeth_frag)
         print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
                % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
@@ -87,7 +87,7 @@ class SimpleDemoTests(unittest.TestCase):
             print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
                    (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
 
-        print " Classifying the 'Hound' text."
+        print(" Classifying the 'Hound' text.")
         s = db.classify_text(Hound_frag)
         print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
                % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
@@ -95,7 +95,7 @@ class SimpleDemoTests(unittest.TestCase):
             print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
                    (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
 
-        print " Classifying the 'Wind in the Willows' text."
+        print(" Classifying the 'Wind in the Willows' text.")
         s = db.classify_text(Willows_frag)
         print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
                % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))

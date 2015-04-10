@@ -220,7 +220,6 @@ CB_load(PyObject *type, PyObject *args) {
   }
   if ((self = (CB_Object *)PyObject_New(CB_Object, &CB_Type)) == NULL){
     fclose(fp);
-    PyErr_Format(ErrorObject, "some shit happened");
     return NULL;
   }
   self->p_cb = p_cb;

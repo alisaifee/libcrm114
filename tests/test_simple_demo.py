@@ -58,47 +58,20 @@ class SimpleDemoTests(unittest.TestCase):
         db = pycrm114.DataBlock(cb)
 
         db.learn_text(0, texts.Alice)
-
-        # Starting to learn the 'MacBeth' text
         db.learn_text(1, texts.Macbeth)
 
-        # Writing our datablock as 'simple_demo_datablock.txt'.
         db.dump("simple_demo_datablock.txt")
 
-        # Reading text form back in."
         db = pycrm114.DataBlock.load("simple_demo_datablock.txt")
 
-        #  Classifying the 'Alice' text.
         s = db.classify_text(Alice_frag)
+        self.assertEqual(s.best_match(), "Alice")
 
-
-
-        print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
-               % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
-        for sc in s.scores():
-            print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
-                   (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
-
-        print(" Classifying the 'Macbeth' text.")
         s = db.classify_text(Macbeth_frag)
-        print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
-               % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
-        for sc in s.scores():
-            print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
-                   (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
+        self.assertEqual(s.best_match(), "Macbeth")
 
-        print(" Classifying the 'Hound' text.")
         s = db.classify_text(Hound_frag)
-        print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
-               % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
-        for sc in s.scores():
-            print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
-                   (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
+        self.assertEqual(s.best_match(), "Macbeth")
 
-        print(" Classifying the 'Wind in the Willows' text.")
         s = db.classify_text(Willows_frag)
-        print ("Best match: %s  Tot succ prob: %f  overall_pR: %f  unk_features: %d"
-               % (s.best_match(), s.tsprob(), s.overall_pR(), s.unk_features()))
-        for sc in s.scores():
-            print ("documents: %d  features: %d  hits: %d  prob: %f  pR: %f" %
-                   (sc["documents"], sc["features"], sc["hits"], sc["prob"], sc["pR"]))
+        self.assertEqual(s.best_match(), "Alice")

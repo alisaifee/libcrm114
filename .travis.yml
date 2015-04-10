@@ -4,6 +4,6 @@ python:
     - "2.7"
 
 install:
-    - sudo apt-get install libtre 
+    - sudo apt-get install libtre5 libtre-dev
     - python setup.py build 
 script: nosetests tests

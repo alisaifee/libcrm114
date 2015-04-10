@@ -28,33 +28,6 @@
 #include "crm114_lib.h"
 #include "crm114_internal.h"
 
-// error messages for error codes
-
-const char *crm114_strerror(CRM114_ERR err)
-{
-  switch (err)
-    {
-    case CRM114_OK:
-      return "success";
-    case CRM114_BADARG:
-      return "bad arguments";
-    case CRM114_NOMEM:
-      return "couldn't allocate memory";
-    case CRM114_REGEX_ERR:
-      return "error from regex lib";
-    case CRM114_FULL:
-      return "buffer full";
-    case CRM114_CLASS_FULL:
-      return "class data block is full, can't learn more";
-    case CRM114_OPEN_FAILED:
-      return "file open failed";
-    case CRM114_NOT_YET_IMPLEMENTED:
-      return "not yet implemented";
-    case CRM114_UNK:
-    default:
-      return "unknown error";
-    }
-}
 
 // Whether to sort/unique features before handing them to
 // classifiers. Optimistic: assumes that all feature classifiers have
@@ -1162,7 +1135,8 @@ static int read_text_string_fp(char buf[], int bufsize, FILE *fp)
   return ret;
 }
 
-CRM114_ERR crm114_cb_write_text_fp(const CRM114_CONTROLBLOCK *cb, FILE *fp)
+// Returns T/F success/failure.
+int crm114_cb_write_text_fp(const CRM114_CONTROLBLOCK *cb, FILE *fp)
 {
   int row, col;
   int i;
@@ -1227,10 +1201,11 @@ CRM114_ERR crm114_cb_write_text_fp(const CRM114_CONTROLBLOCK *cb, FILE *fp)
 	      cb->class[i].features);
     }
 
-  return CRM114_OK;			// optimistic, aren't we?
+  return TRUE;			// optimistic, aren't we?
 }
 
-CRM114_ERR crm114_cb_write_text(const CRM114_CONTROLBLOCK *cb, const char filename[])
+// Returns T/F success/failure.
+int crm114_cb_write_text(const CRM114_CONTROLBLOCK *cb, const char filename[])
 {
   FILE *fp;
   int ret;
@@ -1241,12 +1216,13 @@ CRM114_ERR crm114_cb_write_text(const CRM114_CONTROLBLOCK *cb, const char filena
       fclose(fp);
     }
   else
-    ret = CRM114_OPEN_FAILED;
+    ret = FALSE;
 
   return ret;
 }
 
-CRM114_ERR crm114_db_write_text_fp(const CRM114_DATABLOCK *db, FILE *fp)
+// Returns T/F success/failure.
+int crm114_db_write_text_fp(const CRM114_DATABLOCK *db, FILE *fp)
 {
   (void)crm114_cb_write_text_fp(&db->cb, fp);
   // write learned data
@@ -1280,7 +1256,8 @@ CRM114_ERR crm114_db_write_text_fp(const CRM114_DATABLOCK *db, FILE *fp)
   return CRM114_OK;
 }
 
-CRM114_ERR crm114_db_write_text(const CRM114_DATABLOCK *db, const char filename[])
+// Returns T/F success/failure.
+int crm114_db_write_text(const CRM114_DATABLOCK *db, const char filename[])
 {
   FILE *fp;
   int ret;

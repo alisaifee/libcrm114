@@ -1,6 +1,13 @@
+.. |travis-ci| image:: https://secure.travis-ci.org/alisaifee/limits.png?branch=master
+    :target: https://travis-ci.org/#!/alisaifee/limits?branch=master
+
 From http://crm114.sourceforge.net/wiki/doku.php?id=download:
 
+*************************
 CRM114 C-callable Library
+*************************
+
+|travis-ci|
 
 This is the callable library version of CRM114. It has most of the
 classifiers as the standalone language (with some significant
@@ -36,9 +43,15 @@ zero and you get significant speedup.
 
 
 Dependencies
+============
 
-Debian/Ubuntu: libtre5, libtre-dev
+Debian/Ubuntu: ``sudo apt-get install libtre5 libtre-dev``
+
+OS X: ``brew install tre``
 
 Building
+========
 
-$ make && cd python && python setup build
+.. code-block:: bash
+
+  python setup.py build

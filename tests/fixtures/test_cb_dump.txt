@@ -1,0 +1,12 @@
+"#!crm114 -E"
+""
+datablock size 128504
+classifier flags 0x800000800
+token regex "."
+matrix rows 1 matrix columns 5
+ 1 3 5 7 11
+blocks 1
+0 0 0 0
+classes 2
+"Alice" S 0 0
+"Macbeth" F 0 0

@@ -61,6 +61,19 @@ typedef struct {
   PyObject_HEAD
     CRM114_MATCHRESULT mr;
 } Result_Object;
+/* Utilities */
+
+FILE * filePointerFromObject( PyObject * obj, char * mode){
+  FILE * fp;
+  // ensure that the PyObject is a file
+  int fn = PyObject_AsFileDescriptor(obj);
+  if ( -1 == fn ){
+    return NULL;
+  }
+  fp = fdopen(fn, mode);
+  return fp;
+
+}
 
 /* Control block */
 
@@ -189,16 +202,18 @@ CB_dump(CB_Object *self, PyObject *args) {
   PyObject *fpo;
   FILE *fp;
   CRM114_ERR cerr;
-  char * fn;
-  if (!PyArg_ParseTuple(args, "s", &fn))
-    return NULL;
-  fp = fopen(fn, "w");
-  if ((cerr = crm114_cb_write_text_fp(self->p_cb, fp)) != CRM114_OK) {
-    PyErr_Format(ErrorObject, "error storing control block: %s", crm114_strerror(cerr));
-    fclose(fp);
+  if (!PyArg_ParseTuple(args, "O", &fpo)){
     return NULL;
   }
-  fclose(fp);
+  if ( (fp = filePointerFromObject(fpo, "w")) == NULL ){
+    PyErr_Format(ErrorObject, "unable to access file");
+    return NULL;
+  }
+  if ((cerr = crm114_cb_write_text_fp(self->p_cb, fp)) != CRM114_OK) {
+    PyErr_Format(ErrorObject, "error storing control block: %s", crm114_strerror(cerr));
+    return NULL;
+  }
+  fflush(fp);
   return Py_BuildValue("");
 }
 
@@ -207,23 +222,22 @@ CB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;
   CB_Object *self;
   FILE *fp;
-  char * fn;
   CRM114_CONTROLBLOCK *p_cb;
 
-  if (!PyArg_ParseTuple(args, "s", &fn))
+  if (!PyArg_ParseTuple(args, "O", &fpo))
     return NULL;
-  fp = fopen(fn, "r");
+  if( (fp = filePointerFromObject(fpo, "r")) == NULL ){
+    PyErr_Format(ErrorObject, "unable to access file");
+    return NULL;
+  }
   if ((p_cb = crm114_cb_read_text_fp(fp)) == NULL) {
     PyErr_Format(ErrorObject, "error reading control block");
-    fclose(fp);
     return NULL;
   }
   if ((self = (CB_Object *)PyObject_New(CB_Object, &CB_Type)) == NULL){
-    fclose(fp);
     return NULL;
   }
   self->p_cb = p_cb;
-  fclose(fp);
   return (PyObject *)self;
 }
 
@@ -353,18 +367,20 @@ static PyObject *
 DB_dump(DB_Object *self, PyObject *args) {
   PyObject *fpo;
   FILE *fp;
-  char *fn;
   CRM114_ERR cerr;
 
-  if (!PyArg_ParseTuple(args, "s", &fn))
+  if (!PyArg_ParseTuple(args, "O", &fpo))
     return NULL;
-  fp = fopen(fn, "wb");
-  if ((cerr = crm114_db_write_text_fp(self->p_db, fp)) != CRM114_OK) {
-    PyErr_Format(ErrorObject, "error storing data block: %s", crm114_strerror(cerr));
-    fclose(fp);
+
+  if ( (fp = filePointerFromObject(fpo, "w")) == NULL ) {
+    PyErr_Format(ErrorObject, "unable to access file");
     return NULL;
   }
-  fclose(fp);
+  if ((cerr = crm114_db_write_text_fp(self->p_db, fp)) != CRM114_OK) {
+    PyErr_Format(ErrorObject, "error storing data block: %s", crm114_strerror(cerr));
+    return NULL;
+  }
+  fflush(fp);
   Py_RETURN_NONE;
 }
 
@@ -373,23 +389,22 @@ DB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;
   DB_Object *self;
   FILE *fp;
-  char * fn;
   CRM114_DATABLOCK *p_db;
 
-  if (!PyArg_ParseTuple(args, "s", &fn))
+  if (!PyArg_ParseTuple(args, "O", &fpo))
     return NULL;
-  fp = fopen(fn, "rb");
+  if( (fp = filePointerFromObject(fpo, "r")) == NULL ) {
+    PyErr_Format(ErrorObject, "unable to access data block file");
+    return NULL;
+  }
   if ((p_db = crm114_db_read_text_fp(fp)) == NULL) {
     PyErr_Format(ErrorObject, "error reading data block");
-    fclose(fp);
     return NULL;
   }
   if ((self = (DB_Object *)PyObject_New(DB_Object, &DB_Type)) == NULL){
-    fclose(fp);
     return NULL;
   }
   self->p_db = p_db;
-  fclose(fp);
   return (PyObject *)self;
 }
 

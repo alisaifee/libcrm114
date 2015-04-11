@@ -42,27 +42,25 @@ class SimpleDemoTests(unittest.TestCase):
                             classes=[("Alice", True), ("Macbeth", False)],
                             start_mem = 8000000)
         output = tempfile.mktemp()
-        cb.dump(output)
-
-        self.assertTrue(os.path.isfile(output))
-        self.assertTrue(os.stat(output).st_size > 0)
+        cb.dump(open(output, "w"))
+        self.assertTrue(os.stat(output).st_size > 0, output)
 
         cb = pycrm114.ControlBlock(flags=(pycrm114.CRM114_SVM | pycrm114.CRM114_STRING),
                                    classes=[("Alice", True), ("Macbeth", False)],
                                    start_mem = 8000000)
-        cb.load(output)
-        pycrm114.ControlBlock.load("tests/fixtures/test_cb_dump.txt")
+        cb.load(open(output))
+        pycrm114.ControlBlock.load(open("tests/fixtures/test_cb_dump.txt"))
 
     def test_classification(self):
-        cb = pycrm114.ControlBlock.load("tests/fixtures/test_cb_dump.txt")
+        cb = pycrm114.ControlBlock.load(open("tests/fixtures/test_cb_dump.txt"))
         db = pycrm114.DataBlock(cb)
 
         db.learn_text(0, texts.Alice)
         db.learn_text(1, texts.Macbeth)
 
-        db.dump("simple_demo_datablock.txt")
+        db.dump(open("simple_demo_datablock.txt", "w"))
 
-        db = pycrm114.DataBlock.load("simple_demo_datablock.txt")
+        db = pycrm114.DataBlock.load(open("simple_demo_datablock.txt"))
 
         s = db.classify_text(Alice_frag)
         self.assertEqual(s.best_match(), "Alice")

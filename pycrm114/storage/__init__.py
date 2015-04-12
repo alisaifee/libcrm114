@@ -23,3 +23,6 @@ class Storage(object):
     def save(self, control_block, data_block):
         self.update_control_block(control_block)
         self.update_data_block(data_block)
+
+
+from . fs import *

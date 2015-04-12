@@ -42,3 +42,7 @@ class CRM114(object):
         best_match = match_result.best_match()
         score = [k['prob'] for k in match_result.scores() if k['name'] == best_match][0]
         return {"class": best_match, "score": score}
+
+    def save(self):
+        if self.storage:
+            return self.storage.save(self.control_block, self.data_block)

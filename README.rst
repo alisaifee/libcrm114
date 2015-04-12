@@ -9,6 +9,36 @@ pycrm114
 
 Python bindings for libcrm114
 
+Minimal quickstart
+==================
+
+No persistence
+--------------
+.. code-block:: python
+
+    import pycrm114
+
+    crm = pycrm114.CRM114(classes=["spam", "ham"])
+    crm.learn("spam", "foo bar")
+    crm.learn("ham", "bar is good")
+    assert crm.classify("is bar good")["class"] == "ham"
+    assert crm.classify("foo bar good")["class"] == "spam"
+
+
+File System Persistence
+-----------------------
+
+.. code-block:: python
+
+    import pycrm114
+
+    crm = pycrm114.CRM114(classes=["spam", "ham"], storage=pycrm.storage.FileSystemStorage("/var/tmp/crm-test"))
+    crm.learn("spam", "foo bar")
+    crm.learn("ham", "bar is good")
+    crm.save()
+    new_crm = pycrm114.CRM114(classes=["spam", "ham"], storage=pycrm.storage.FileSystemStorage("/var/tmp/crm-test"))
+    assert new_crm.classify("is bar good")["class"] == "ham"
+    assert new_crm.classify("foo bar good")["class"] == "spam"
 
 Dependencies
 ============

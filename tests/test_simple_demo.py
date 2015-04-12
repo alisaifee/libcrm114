@@ -2,7 +2,7 @@ import os
 import pycrm114
 import unittest
 import tempfile
-from . import texts
+from .data import texts
 
 Alice_frag = \
     "So she was considering in her own mind (as well as she could, for the\n" \

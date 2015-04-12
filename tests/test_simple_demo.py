@@ -37,6 +37,9 @@ Willows_frag = \
     "the carol of happy birds fell on his dulled hearing almost like a shout."
 
 class SimpleDemoTests(unittest.TestCase):
+    """
+    tests based on the simple_demo shipped with libcrm114
+    """
     def test_control_block(self):
         cb = pycrm114.ControlBlock(flags=(pycrm114.CRM114_SVM | pycrm114.CRM114_STRING),
                             classes=[("Alice", True), ("Macbeth", False)],
@@ -58,9 +61,10 @@ class SimpleDemoTests(unittest.TestCase):
         db.learn_text(0, texts.Alice)
         db.learn_text(1, texts.Macbeth)
 
-        db.dump(open("simple_demo_datablock.txt", "w"))
+        output = tempfile.mktemp()
+        db.dump(open(output, "w"))
 
-        db = pycrm114.DataBlock.load(open("simple_demo_datablock.txt"))
+        db = pycrm114.DataBlock.load(open(output))
 
         s = db.classify_text(Alice_frag)
         self.assertEqual(s.best_match(), "Alice")

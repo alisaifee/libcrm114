@@ -753,7 +753,7 @@ init_binding(void)
   /* Add error object. */
   ErrorObject = PyErr_NewException("_binding.error", NULL, NULL);
   assert(ErrorObject != NULL);
-  PyDict_SetItemString(d, "error",   ErrorObject);
+  insobj(d, "error", ErrorObject);
 
   /* Add flags. */
 

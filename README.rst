@@ -46,5 +46,5 @@ Building
 References
 ==========
 
-* [crm114](http://crm114.sourceforge.net/wiki/doku.php)
+* `crm114 <http://crm114.sourceforge.net/wiki/doku.php>`_
 

@@ -6,6 +6,7 @@ python:
     - "3.4"
 
 install:
+    - pip install -r requirements/main.txt 
     - sudo apt-get install libtre5 libtre-dev
     - python setup.py build 
 script: nosetests tests

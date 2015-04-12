@@ -44,6 +44,7 @@ setup(
     name='pycrm114',
     version='0.1.0',
     description='Python interface to libcrm114',
+    long_description=open('README.rst').read(),
     author='Prashanth Mundkur',
     author_email='prashanth.mundkur at gmail.com',
     maintainer='Ali-Akber Saifee',

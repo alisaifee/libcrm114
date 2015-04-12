@@ -4,3 +4,4 @@ include NOTICE
 recursive-include lib *.c
 recursive-include include *.h
 recursive-include src *.c
+recursive-include requirements *.txt

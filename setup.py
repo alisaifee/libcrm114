@@ -37,6 +37,9 @@ pycrm114_module = Extension('pycrm114._binding',
                             extra_compile_args=['-std=c99', '-g', '-pedantic', '-Wall', '-Wextra', '-Wpointer-arith',
                                                 '-Wstrict-prototypes', '-fpic'])
 
+requirements = filter(None, open(
+    os.path.join(top_dir, 'requirements', 'main.txt')).read().splitlines())
+
 setup(
     name='pycrm114',
     version='0.1.0',
@@ -47,6 +50,7 @@ setup(
     maintainer_email='ali at indydevs.org',
     url='https://github.com/alisaifee/libcrm114',
     license=open('LICENSE').read(),
+    install_requires=requirements,
     ext_modules=[pycrm114_module],
     packages=find_packages(exclude=["tests*"]),
 )

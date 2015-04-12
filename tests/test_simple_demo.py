@@ -52,10 +52,10 @@ class SimpleDemoTests(unittest.TestCase):
                                    classes=[("Alice", True), ("Macbeth", False)],
                                    start_mem = 8000000)
         cb.load(open(output))
-        pycrm114.ControlBlock.load(open("tests/fixtures/test_cb_dump.txt"))
+        pycrm114.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
 
     def test_classification(self):
-        cb = pycrm114.ControlBlock.load(open("tests/fixtures/test_cb_dump.txt"))
+        cb = pycrm114.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
         db = pycrm114.DataBlock(cb)
 
         db.learn_text(0, texts.Alice)

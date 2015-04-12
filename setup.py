@@ -48,7 +48,7 @@ setup(
     author_email='prashanth.mundkur at gmail.com',
     maintainer='Ali-Akber Saifee',
     maintainer_email='ali at indydevs.org',
-    url='https://github.com/alisaifee/libcrm114',
+    url='https://github.com/alisaifee/pycrm114',
     license=open('LICENSE').read(),
     install_requires=requirements,
     ext_modules=[pycrm114_module],

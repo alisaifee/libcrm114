@@ -1,5 +1,5 @@
 import os
-import pycrm114
+import pycrm114._binding as binding
 import unittest
 import tempfile
 from .data import texts
@@ -41,22 +41,22 @@ class SimpleDemoTests(unittest.TestCase):
     tests based on the simple_demo shipped with libcrm114
     """
     def test_control_block(self):
-        cb = pycrm114.ControlBlock(flags=(pycrm114.CRM114_SVM | pycrm114.CRM114_STRING),
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
                             classes=[("Alice", True), ("Macbeth", False)],
                             start_mem = 8000000)
         output = tempfile.mktemp()
         cb.dump(open(output, "w"))
         self.assertTrue(os.stat(output).st_size > 0, output)
 
-        cb = pycrm114.ControlBlock(flags=(pycrm114.CRM114_SVM | pycrm114.CRM114_STRING),
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
                                    classes=[("Alice", True), ("Macbeth", False)],
                                    start_mem = 8000000)
         cb.load(open(output))
-        pycrm114.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
+        binding.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
 
     def test_classification(self):
-        cb = pycrm114.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
-        db = pycrm114.DataBlock(cb)
+        cb = binding.ControlBlock.load(open("tests/data/test_cb_dump.txt"))
+        db = binding.DataBlock(cb)
 
         db.learn_text(0, texts.Alice)
         db.learn_text(1, texts.Macbeth)
@@ -64,7 +64,7 @@ class SimpleDemoTests(unittest.TestCase):
         output = tempfile.mktemp()
         db.dump(open(output, "w"))
 
-        db = pycrm114.DataBlock.load(open(output))
+        db = binding.DataBlock.load(open(output))
 
         s = db.classify_text(Alice_frag)
         self.assertEqual(s.best_match(), "Alice")

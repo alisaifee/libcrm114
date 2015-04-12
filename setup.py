@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 
 
 top_dir = os.path.dirname(os.path.realpath(__file__))
@@ -28,8 +28,8 @@ libcrm114_obj = [
         "crm114_regex_tre.c",
     )
 ]
-pycrm114_module = Extension('pycrm114',
-                            sources=libcrm114_obj + ['src/pycrm114_module.c'],
+pycrm114_module = Extension('pycrm114._binding',
+                            sources=libcrm114_obj + ['pycrm114/pycrm114_module.c'],
                             include_dirs=[inc_dir],
                             library_dirs=[lib_dir],
                             runtime_library_dirs=[lib_dir],
@@ -37,13 +37,16 @@ pycrm114_module = Extension('pycrm114',
                             extra_compile_args=['-std=c99', '-g', '-pedantic', '-Wall', '-Wextra', '-Wpointer-arith',
                                                 '-Wstrict-prototypes', '-fpic'])
 
-setup(name='pycrm114',
-      version='0.1.0',
-      description='Python interface to libcrm114',
-      author='Prashanth Mundkur',
-      author_email='prashanth.mundkur at gmail.com',
-      maintainer='Ali-Akber Saifee',
-      maintainer_email='ali at indydevs.org',
-      url='https://github.com/alisaifee/libcrm114',
-      license=open('LICENSE').read(),
-      ext_modules=[pycrm114_module])
+setup(
+    name='pycrm114',
+    version='0.1.0',
+    description='Python interface to libcrm114',
+    author='Prashanth Mundkur',
+    author_email='prashanth.mundkur at gmail.com',
+    maintainer='Ali-Akber Saifee',
+    maintainer_email='ali at indydevs.org',
+    url='https://github.com/alisaifee/libcrm114',
+    license=open('LICENSE').read(),
+    ext_modules=[pycrm114_module],
+    packages=find_packages(exclude=["tests*"]),
+)

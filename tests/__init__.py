@@ -1,13 +1,9 @@
 import glob
 import sys
+import os
+version = sys.version.split(" ")[0]
+majorminor = version[0:3]
 
-try:
-    import pycrm114
-except ImportError:
-    version = sys.version.split(" ")[0]
-    majorminor = version[0:3]
-
-    path = glob.glob("build/lib*-%s" % majorminor)[0]
-    sys.path.insert(0, path)
-
-
+paths = glob.glob("build/lib*-%s" % majorminor)
+if paths:
+    sys.path.insert(0, os.path.abspath(paths[0]))

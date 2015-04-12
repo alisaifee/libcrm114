@@ -277,7 +277,7 @@ static PyMethodDef CB_methods[] = {
 
 static PyTypeObject CB_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-    "pycrm114.ControlBlock",      /* tp_name           */
+    "_binding.ControlBlock",      /* tp_name           */
   sizeof(CB_Object),            /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -448,7 +448,7 @@ static PyMethodDef DB_methods[] = {
 
 static PyTypeObject DB_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-    "pycrm114.DataBlock",         /* tp_name           */
+    "_binding.DataBlock",         /* tp_name           */
   sizeof(DB_Object),            /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -619,7 +619,7 @@ static PyMethodDef Result_methods[] = {
 
 static PyTypeObject Result_Type = {
   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-    "pycrm114.MatchResult",       /* tp_name           */
+    "_binding.MatchResult",       /* tp_name           */
   sizeof(Result_Object),        /* tp_basicsize      */
   0,                            /* tp_itemsize       */
 
@@ -703,9 +703,9 @@ inslong(PyObject *d, char *name, unsigned long long value) {
 
 PyMODINIT_FUNC
 #if PY_MAJOR_VERSION >= 3
-PyInit_pycrm114(void)
+PyInit__binding(void)
 #else
-initpycrm114(void)
+init_binding(void)
 #endif
 
 {
@@ -713,7 +713,7 @@ initpycrm114(void)
 #if PY_MAJOR_VERSION >= 3
   static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "pycrm114",          /* m_name */
+    "_binding",          /* m_name */
     module_doc,          /* m_doc */
     -1,                  /* m_size */
     crm114_methods,      /* m_methods */
@@ -727,7 +727,7 @@ initpycrm114(void)
 #if PY_MAJOR_VERSION >= 3
   m = PyModule_Create(&moduledef);
 #else
-  m = Py_InitModule3("pycrm114", crm114_methods, module_doc);
+  m = Py_InitModule3("_binding", crm114_methods, module_doc);
 #endif
   assert(m != NULL && PyModule_Check(m));
 
@@ -751,7 +751,7 @@ initpycrm114(void)
   assert(d != NULL);
 
   /* Add error object. */
-  ErrorObject = PyErr_NewException("pycrm114.error", NULL, NULL);
+  ErrorObject = PyErr_NewException("_binding.error", NULL, NULL);
   assert(ErrorObject != NULL);
   PyDict_SetItemString(d, "error",   ErrorObject);
 

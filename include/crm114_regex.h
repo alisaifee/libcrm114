@@ -16,7 +16,7 @@
 //   along with the CRM114 Library.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include <tre/tre.h>
+#include <tre/regex.h>
 
 
 extern int crm114__regncomp(regex_t *preg, const char *regex, long regex_len,

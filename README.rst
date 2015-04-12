@@ -25,7 +25,7 @@ Dependencies
 
 .. code-block:: bash 
 
-  pip install tox nose
+  pip install -r requirements/test.txt
 
 To test against different python versions use tox::
   

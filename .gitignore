@@ -1,4 +1,6 @@
 *.o
 *.pyc
+.tox
+.idea
 build
 dist

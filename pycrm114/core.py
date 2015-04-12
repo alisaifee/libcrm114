@@ -28,7 +28,7 @@ class CRM114(object):
                 self.control_block = _binding.ControlBlock(flags=self.flags,
                                   classes=[(cls, True) for cls in self.classes],
                                   start_mem = 8000000)
-            except _binding.error, e:
+            except _binding.error as e:
                 raise CRM114InitializationError("Unable to initialize (%s)" % e)
             self.data_block = _binding.DataBlock(self.control_block)
 

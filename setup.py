@@ -30,6 +30,7 @@ libcrm114_obj = [
 ]
 if platform.uname()[0] in ['Darwin', 'BSD']:
     libcrm114_obj.insert(0, 'lib/memstream.c')
+    libcrm114_obj.insert(0, 'lib/fmemopen.c')
 
 pycrm114_module = Extension('pycrm114._binding',
                             sources=libcrm114_obj + ['pycrm114/pycrm114_module.c'],

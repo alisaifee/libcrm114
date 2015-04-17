@@ -26,6 +26,7 @@
 #include "crm114_internal.h"
 #if defined(BSD) || (defined(__APPLE__) && defined(__MACH__))
 #include "memstream.h"
+#include "fmemopen.h"
 #endif
 #undef UNUSED
 #define UNUSED(var)     ((void)&var)
@@ -270,6 +271,29 @@ CB_load(PyObject *type, PyObject *args) {
 }
 
 static PyObject *
+CB_loads(PyObject *type, PyObject *args) {
+  CB_Object *self;
+  char * buffer = 0;
+  size_t size = 0;
+  FILE * fp;
+  CRM114_CONTROLBLOCK *p_cb;
+  if (!PyArg_ParseTuple(args, "s#", &buffer, &size)){
+    PyErr_Format(ErrorObject, "expected string as parameter");
+    return NULL;
+  }
+  fp = fmemopen(buffer, size, "r");
+  if ((p_cb = crm114_cb_read_text_fp(fp)) == NULL) {
+    PyErr_Format(ErrorObject, "error reading control block");
+    return NULL;
+  }
+  if ((self = (CB_Object *)PyObject_New(CB_Object, &CB_Type)) == NULL){
+    return NULL;
+  }
+  self->p_cb = p_cb;
+  return (PyObject *)self;
+}
+
+static PyObject *
 CB_dumps(CB_Object *self, PyObject *args) {
   FILE * fp;
   char *buffer = 0;
@@ -296,11 +320,13 @@ CB_dumps(CB_Object *self, PyObject *args) {
 
 static PyMethodDef CB_methods[] = {
   {"dump", (PyCFunction)CB_dump, METH_VARARGS,
-    "store data block into a file"},
+    "store control block into a file"},
   {"load", (PyCFunction)CB_load, METH_CLASS | METH_VARARGS,
-    "load data block from a file"},
+    "load control block from a file"},
   {"dumps", (PyCFunction)CB_dumps, METH_VARARGS,
-    "store data block into a file"},
+    "serialize control block to a string"},
+  {"loads", (PyCFunction)CB_loads, METH_CLASS | METH_VARARGS,
+    "load control block from a string"},
   {NULL}                        /* sentinel          */
 };
 

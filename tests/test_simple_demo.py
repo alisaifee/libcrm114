@@ -88,3 +88,13 @@ class SimpleDemoTests(unittest.TestCase):
             out.write(data)
         with open(output, 'r') as inp:
             self.assertTrue(None != binding.ControlBlock.load(inp))
+
+    def test_loads_control_block(self):
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
+                                  classes=[("Alice", True), ("Macbeth", False)],
+                                  start_mem = 8000000)
+        output = tempfile.mktemp()
+        with open(output, 'w') as out:
+            cb.dump(out)
+        data = open(output).read()
+        self.assertTrue(None != binding.ControlBlock.loads(data))

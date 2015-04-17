@@ -24,7 +24,9 @@
 #include "crm114_structs.h"
 #include "crm114_lib.h"
 #include "crm114_internal.h"
-
+#if defined(BSD) || (defined(__APPLE__) && defined(__MACH__))
+#include "memstream.h"
+#endif
 #undef UNUSED
 #define UNUSED(var)     ((void)&var)
 

@@ -1,5 +1,5 @@
 import os
-
+import platform
 from setuptools import setup, Extension, find_packages
 
 
@@ -28,6 +28,9 @@ libcrm114_obj = [
         "crm114_regex_tre.c",
     )
 ]
+if platform.uname()[0] in ['Darwin', 'BSD']:
+    libcrm114_obj.insert(0, 'lib/memstream.c')
+
 pycrm114_module = Extension('pycrm114._binding',
                             sources=libcrm114_obj + ['pycrm114/pycrm114_module.c'],
                             include_dirs=[inc_dir],

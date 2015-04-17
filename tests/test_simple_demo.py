@@ -77,3 +77,14 @@ class SimpleDemoTests(unittest.TestCase):
 
         s = db.classify_text(Willows_frag)
         self.assertEqual(s.best_match(), "Alice")
+
+    def test_dumps_control_block(self):
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
+                                  classes=[("Alice", True), ("Macbeth", False)],
+                                  start_mem = 8000000)
+        data = cb.dumps()
+        output = tempfile.mktemp()
+        with open(output, 'w') as out:
+            out.write(data)
+        with open(output, 'r') as inp:
+            self.assertIsNotNone(binding.ControlBlock.load(inp))

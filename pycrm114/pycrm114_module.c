@@ -269,11 +269,38 @@ CB_load(PyObject *type, PyObject *args) {
   return (PyObject *)self;
 }
 
+static PyObject *
+CB_dumps(CB_Object *self, PyObject *args) {
+  FILE * fp;
+  char *buffer = 0;
+  size_t size = 0;
+  fp = open_memstream(&buffer, &size);
+  if (NULL == fp){
+    PyErr_Format(ErrorObject, "unable to allocate memory for dumping control block");
+    return NULL;
+  }
+  if (FALSE==crm114_cb_write_text_fp(self->p_cb, fp)) {
+    PyErr_Format(ErrorObject, "error storing control block");
+    if ( NULL!=buffer){
+       free(buffer);
+    }
+    return NULL;
+  }
+  fclose(fp);
+  PyObject * dump = PyString_FromString(buffer);
+  if ( NULL != buffer ){
+    free(buffer);
+  }
+  return dump;
+}
+
 static PyMethodDef CB_methods[] = {
   {"dump", (PyCFunction)CB_dump, METH_VARARGS,
     "store data block into a file"},
   {"load", (PyCFunction)CB_load, METH_CLASS | METH_VARARGS,
     "load data block from a file"},
+  {"dumps", (PyCFunction)CB_dumps, METH_VARARGS,
+    "store data block into a file"},
   {NULL}                        /* sentinel          */
 };
 
@@ -411,7 +438,10 @@ DB_dump(DB_Object *self, PyObject *args) {
   fflush(fp);
   Py_RETURN_NONE;
 }
-
+static PyObject *
+DB_dumps(DB_Object *self, PyObject *args) {
+  Py_RETURN_NONE;
+}
 static PyObject *
 DB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;

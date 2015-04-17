@@ -87,4 +87,4 @@ class SimpleDemoTests(unittest.TestCase):
         with open(output, 'w') as out:
             out.write(data)
         with open(output, 'r') as inp:
-            self.assertIsNotNone(binding.ControlBlock.load(inp))
+            self.assertTrue(None != binding.ControlBlock.load(inp))

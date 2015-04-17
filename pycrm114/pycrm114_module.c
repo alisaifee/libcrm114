@@ -287,7 +287,7 @@ CB_dumps(CB_Object *self, PyObject *args) {
     return NULL;
   }
   fclose(fp);
-  PyObject * dump = PyString_FromString(buffer);
+  PyObject * dump = STRINGTOPY(buffer);
   if ( NULL != buffer ){
     free(buffer);
   }

@@ -98,3 +98,32 @@ class SimpleDemoTests(unittest.TestCase):
             cb.dump(out)
         data = open(output).read()
         self.assertTrue(None != binding.ControlBlock.loads(data))
+
+    def test_loads_data_block(self):
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
+                                  classes=[("Alice", True), ("Macbeth", False)],
+                                  start_mem = 8000000)
+        output = tempfile.mktemp()
+        db = binding.DataBlock(cb)
+        db.learn_text(0, texts.Alice)
+        db.learn_text(1, texts.Macbeth)
+        with open(output, 'w') as out:
+            db.dump(out)
+        data = open(output).read()
+        db = binding.DataBlock.loads(data)
+        self.assertEquals(db.classify_text(Alice_frag).best_match(), "Alice")
+
+    def test_dumps_data_block(self):
+        cb = binding.ControlBlock(flags=(binding.CRM114_SVM | binding.CRM114_STRING),
+                                  classes=[("Alice", True), ("Macbeth", False)],
+                                  start_mem = 8000000)
+        output = tempfile.mktemp()
+        db = binding.DataBlock(cb)
+        db.learn_text(0, texts.Alice)
+        db.learn_text(1, texts.Macbeth)
+        data = db.dumps()
+        with open(output, 'w') as out:
+            out.write(data)
+        with open(output) as inp:
+            db = binding.DataBlock.load(inp)
+            self.assertEquals(db.classify_text(Alice_frag).best_match(), "Alice")

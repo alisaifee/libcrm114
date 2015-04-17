@@ -464,10 +464,31 @@ DB_dump(DB_Object *self, PyObject *args) {
   fflush(fp);
   Py_RETURN_NONE;
 }
+
 static PyObject *
 DB_dumps(DB_Object *self, PyObject *args) {
-  Py_RETURN_NONE;
+  FILE * fp;
+  char *buffer = 0;
+  CRM114_ERR cerr;
+  size_t size = 0;
+  fp = open_memstream(&buffer, &size);
+  if (NULL == fp){
+    PyErr_Format(ErrorObject, "unable to allocate memory for dumping data block");
+    return NULL;
+  }
+  if ((cerr = crm114_db_write_text_fp(self->p_db, fp)) != CRM114_OK) {
+    PyErr_Format(ErrorObject, "error storing data block: %s", crm114_strerror(cerr));
+    fclose(fp);
+    return NULL;
+  }
+  fclose(fp);
+  PyObject * dump = STRINGTOPY(buffer);
+  if ( NULL != buffer ){
+    free(buffer);
+  }
+  return dump;
 }
+
 static PyObject *
 DB_load(PyObject *type, PyObject *args) {
   PyObject *fpo;
@@ -491,7 +512,28 @@ DB_load(PyObject *type, PyObject *args) {
   self->p_db = p_db;
   return (PyObject *)self;
 }
-
+static PyObject *
+DB_loads(PyObject *type, PyObject *args) {
+  DB_Object *self;
+  char * buffer = 0;
+  size_t size = 0;
+  FILE * fp;
+  CRM114_DATABLOCK *p_db;
+  if (!PyArg_ParseTuple(args, "s#", &buffer, &size)){
+    PyErr_Format(ErrorObject, "expected string as parameter");
+    return NULL;
+  }
+  fp = fmemopen(buffer, size, "r");
+  if ((p_db = crm114_db_read_text_fp(fp)) == NULL) {
+    PyErr_Format(ErrorObject, "error reading data block");
+    return NULL;
+  }
+  if ((self = (DB_Object *)PyObject_New(DB_Object, &DB_Type)) == NULL){
+    return NULL;
+  }
+  self->p_db = p_db;
+  return (PyObject *)self;
+}
 static PyMethodDef DB_methods[] = {
   {"learn_text", (PyCFunction)DB_learn_text, METH_VARARGS,
     "learn some example text into the specified class"},
@@ -501,6 +543,10 @@ static PyMethodDef DB_methods[] = {
     "store data block into a file"},
   {"load", (PyCFunction)DB_load, METH_CLASS | METH_VARARGS,
     "load data block from a file"},
+  {"dumps", (PyCFunction)DB_dumps, METH_VARARGS,
+    "serialize data block to a string"},
+  {"loads", (PyCFunction)DB_loads, METH_CLASS | METH_VARARGS,
+    "load data block from a string"},
   {NULL}                        /* sentinel          */
 };
 

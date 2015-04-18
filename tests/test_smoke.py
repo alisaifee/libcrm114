@@ -25,3 +25,13 @@ class SmokeTests(unittest.TestCase):
         self.assertEqual(crm.classify("would you like to buy viagra")['class'], 'spam')
         new_crm = pycrm114.CRM114(["spam", "ham"], storage=FileSystemStorage(temp_dir), auto_save=True)
         self.assertEqual(new_crm.classify("would you like to buy viagra")['class'], 'spam')
+
+    def test_unlearn(self):
+        crm = pycrm114.CRM114(["spam", "ham"])
+        self.assertTrue(crm.classify("is spam good")['score']==0.5)
+        crm.learn("spam", "spam is good")
+        self.assertTrue(crm.classify("is spam good")['score']>0.5)
+        crm.forget("spam", "spam is good")
+        self.assertTrue(crm.classify("is spam good")['score']==0.5)
+        crm.learn("spam", "spam is good")
+        self.assertTrue(crm.classify("is spam good")['score']>0.5)

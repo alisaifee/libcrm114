@@ -425,6 +425,30 @@ DB_learn_text(DB_Object *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static PyObject *
+DB_forget_text(DB_Object *self, PyObject *args) {
+  const char *text; int text_len;
+  int nclass;
+  CRM114_ERR cerr;
+
+  if (!PyArg_ParseTuple(args, "ns#", &nclass, &text, &text_len))
+    return NULL;
+  if (nclass >= self->p_db->cb.how_many_classes) {
+    PyErr_SetString(ErrorObject, "invalid (out of range) class");
+    return NULL;
+  }
+  // temporarily add the ERASE flag
+  int oldFlags = self->p_db->cb.classifier_flags;
+  self->p_db->cb.classifier_flags |= CRM114_ERASE;
+  if ((cerr = crm114_learn_text(&self->p_db, nclass, text, text_len)) != CRM114_OK) {
+    PyErr_Format(ErrorObject, "error forgetting text: %s", crm114_strerror(cerr));
+    self->p_db->cb.classifier_flags = oldFlags;
+    return NULL;
+  }
+  self->p_db->cb.classifier_flags = oldFlags;
+  Py_RETURN_NONE;
+}
+
 static Result_Object *Result_new(void);
 static PyObject *
 DB_classify_text(DB_Object *self, PyObject *args) {
@@ -537,6 +561,8 @@ DB_loads(PyObject *type, PyObject *args) {
 static PyMethodDef DB_methods[] = {
   {"learn_text", (PyCFunction)DB_learn_text, METH_VARARGS,
     "learn some example text into the specified class"},
+  {"forget_text", (PyCFunction)DB_forget_text, METH_VARARGS,
+    "remove some example text from the specified class"},
   {"classify_text", (PyCFunction)DB_classify_text, METH_VARARGS,
     "classify text into one of the learned classes"},
   {"dump", (PyCFunction)DB_dump, METH_VARARGS,

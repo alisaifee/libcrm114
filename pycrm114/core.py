@@ -37,6 +37,11 @@ class CRM114(object):
         if self.auto_save and self.storage:
             self.storage.save(self.control_block, self.data_block)
 
+    def forget(self, cls, text):
+        self.data_block.forget_text(self.classes.index(cls), text)
+        if self.auto_save and self.storage:
+            self.storage.save(self.control_block, self.data_block)
+
     def classify(self, text):
         match_result = self.data_block.classify_text(text)
         best_match = match_result.best_match()

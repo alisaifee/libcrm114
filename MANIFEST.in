@@ -1,7 +1,7 @@
 include README.rst
 include HISTORY.rst
-include LICENSE
-include NOTICE
+include LICENSE.txt
+include NOTICE.txt
 include CLASSIFIERS
 include versioneer.py
 recursive-include lib *.c

@@ -4,7 +4,7 @@ import os
 import shutil
 version = sys.version.split(" ")[0]
 majorminor = version[0:3]
-paths = glob.glob("build/lib*-%s" % majorminor)
+lib = glob.glob("build/lib*-%s/pycrm114/*.so" % majorminor)
 out_dir = os.path.join(os.path.dirname(os.path.split(__file__)[0]), 'pycrm114')
-if paths:
-    shutil.copy(os.path.join(paths[0], 'pycrm114', '_binding.so'), out_dir)
+if lib:
+    shutil.copy(lib[0], out_dir)

@@ -23,6 +23,8 @@ No persistence
     crm.learn("ham", "bar is good")
     assert crm.classify("is bar good")["class"] == "ham"
     assert crm.classify("foo bar good")["class"] == "spam"
+    crm.forget("spam", "foo bar")
+    assert crm.classify("foo bar good")["class"] == "ham"
 
 
 File System Persistence

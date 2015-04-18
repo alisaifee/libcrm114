@@ -44,9 +44,17 @@ pycrm114_module = Extension('pycrm114._binding',
 requirements = filter(None, open(
     os.path.join(top_dir, 'requirements', 'main.txt')).read().splitlines())
 
+import versioneer
+
+versioneer.versionfile_source = "pycrm114/_version.py"
+versioneer.versionfile_build = "pycrm114/version.py"
+versioneer.tag_prefix = ""
+versioneer.parentdir_prefix = "pycrm114-"
+
+
 setup(
     name='pycrm114',
-    version='0.1.0',
+    version=versioneer.get_version(),
     description='Python interface to libcrm114',
     long_description=open('README.rst').read(),
     author='Prashanth Mundkur',
@@ -58,4 +66,5 @@ setup(
     install_requires=requirements,
     ext_modules=[pycrm114_module],
     packages=find_packages(exclude=["tests*"]),
+    cmdclass=versioneer.get_cmdclass(),
 )

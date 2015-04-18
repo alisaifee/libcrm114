@@ -34,4 +34,12 @@ class SmokeTests(unittest.TestCase):
         crm.forget("spam", "spam is good")
         self.assertTrue(crm.classify("is spam good")['score']==0.5)
         crm.learn("spam", "spam is good")
-        self.assertTrue(crm.classify("is spam good")['score']>0.5)
+
+    def test_readme(self):
+        crm = pycrm114.CRM114(classes=["spam", "ham"])
+        crm.learn("spam", "foo bar")
+        crm.learn("ham", "bar is good")
+        assert crm.classify("is bar good")["class"] == "ham"
+        assert crm.classify("foo bar good")["class"] == "spam"
+        crm.forget("spam", "foo bar")
+        assert crm.classify("foo bar good")["class"] == "ham"

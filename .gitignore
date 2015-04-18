@@ -3,4 +3,5 @@
 .tox
 .idea
 build
+pycrm114/_binding.so
 dist

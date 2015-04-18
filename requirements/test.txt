@@ -1,4 +1,4 @@
 -r main.txt
 nose
 tox
-
+nose-cov

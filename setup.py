@@ -63,6 +63,7 @@ setup(
     maintainer_email='ali at indydevs.org',
     url='https://github.com/alisaifee/pycrm114',
     license=open('LICENSE').read(),
+    classifiers=[k for k in open('CLASSIFIERS').read().split('\n') if k],
     install_requires=requirements,
     ext_modules=[pycrm114_module],
     packages=find_packages(exclude=["tests*"]),

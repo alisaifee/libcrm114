@@ -14,10 +14,20 @@
 pycrm114
 ********
 
-Python bindings for libcrm114
+Pythonic bindings for `crm114`_
+
+CRM114 - the Controllable Regex Mutilator
+=========================================
+
+    CRM114 is a system to examine incoming e-mail, system log streams, data files or other
+    data streams, and to sort, filter, or alter the incoming files or data streams according
+    to the user's wildest desires.
+
+    -- crm114.sourceforge.net
+
 
 Quickstart
-==================
+==========
 
 No persistence
 --------------

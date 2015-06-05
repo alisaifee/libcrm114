@@ -1,14 +1,14 @@
-.. |travis-ci| image:: https://secure.travis-ci.org/alisaifee/pycrm114.png?branch=master
+.. |travis-ci| image:: https://img.shields.io/travis/alisaifee/pycrm114/master.svg?style=flat-square
     :target: https://travis-ci.org/#!/alisaifee/pycrm114?branch=master
-.. |coveralls| image:: https://coveralls.io/repos/alisaifee/pycrm114/badge.png?branch=master
+.. |coveralls| image:: https://img.shields.io/coveralls/alisaifee/limits/master.svg?style=flat-square
     :target: https://coveralls.io/r/alisaifee/pycrm114?branch=master
-.. |pypi| image:: https://pypip.in/v/pycrm114/badge.png
-    :target: https://crate.io/packages/pycrm114/
-.. |license| image:: https://pypip.in/license/pycrm114/badge.png
+.. |pypi| image:: https://img.shields.io/pypi/v/pycrm114.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/pycrm114
+.. |license| image:: https://img.shields.io/pypi/l/pycrm114.svg?style=flat-square
     :target: https://pypi.python.org/pypi/pycrm114/
 .. _crm114: http://crm114.sourceforge.net/wiki/doku.php
 
-|travis-ci| |coveralls| |pypi| |license|
+|travis-ci| |coveralls| |pypi|
 
 ********
 pycrm114

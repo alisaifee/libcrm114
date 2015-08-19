@@ -53,14 +53,14 @@ File System Persistence
 
     crm = pycrm114.CRM114(
         classes=["spam", "ham"],
-        storage=pycrm.storage.FileSystemStorage("/var/tmp/crm-test")
+        storage=pycrm114.storage.FileSystemStorage("/var/tmp/crm-test")
     )
     crm.learn("spam", "foo bar")
     crm.learn("ham", "bar is good")
     crm.save()
     new_crm = pycrm114.CRM114(
         classes=["spam", "ham"],
-        storage=pycrm.storage.FileSystemStorage("/var/tmp/crm-test")
+        storage=pycrm114.storage.FileSystemStorage("/var/tmp/crm-test")
     )
     assert new_crm.classify("is bar good")["class"] == "ham"
     assert new_crm.classify("foo bar good")["class"] == "spam"
